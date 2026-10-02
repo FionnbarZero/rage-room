@@ -1,0 +1,149 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no" />
+    <meta name="theme-color" content="#11131c" />
+    <title>Elderglen: A Hero's Beginning</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@500;600;700&amp;family=Inter:wght@500;600;700;800&amp;display=swap" rel="stylesheet" />
+    <link rel="stylesheet" href="styles.css" />
+  </head>
+  <body>
+    <main id="app">
+      <section id="setup" class="screen setup-screen" aria-labelledby="game-title">
+        <div class="mist mist-one"></div>
+        <div class="mist mist-two"></div>
+        <div class="setup-card">
+          <p class="eyebrow">A gentle role-playing adventure</p>
+          <h1 id="game-title">Elderglen</h1>
+          <p class="subtitle">A Hero's Beginning</p>
+
+          <div class="ornament" aria-hidden="true"><span></span><b>✦</b><span></span></div>
+
+          <div id="question-one" class="question-panel active">
+            <p class="chapter">Chapter I · Identity</p>
+            <h2>Who do you want to be?</h2>
+            <p class="prompt-copy">Every great story begins with a choice.</p>
+            <div class="choice-grid" data-question="identity">
+              <button class="rpg-choice" data-value="Baby"><span class="choice-icon">☾</span><span>Baby</span><small>A life just begun</small></button>
+              <button class="rpg-choice" data-value="Child"><span class="choice-icon">✧</span><span>Child</span><small>Curious and brave</small></button>
+              <button class="rpg-choice" data-value="Adult"><span class="choice-icon">♜</span><span>Adult</span><small>Ready for destiny</small></button>
+            </div>
+          </div>
+
+          <div id="question-two" class="question-panel" aria-hidden="true">
+            <p class="chapter">Chapter II · Home</p>
+            <h2>Where do you live?</h2>
+            <p class="prompt-copy">The royal census remembers every honest soul.</p>
+            <div class="lore-clue"><span>✦</span> Your true home rests beneath the mountain. <span>✦</span></div>
+            <div class="choice-grid" data-question="home">
+              <button class="rpg-choice" data-value="Cloudmere"><span class="choice-icon">☁</span><span>Cloudmere</span><small>Above the silver rain</small></button>
+              <button class="rpg-choice correct-answer" data-value="Stonevale"><span class="choice-icon">△</span><span>Stonevale</span><small>Beneath the mountain</small></button>
+              <button class="rpg-choice" data-value="Mosswick"><span class="choice-icon">♧</span><span>Mosswick</span><small>Deep in the old wood</small></button>
+            </div>
+          </div>
+
+          <p id="whisper" class="whisper" aria-live="polite">Choose carefully. The world is listening.</p>
+        </div>
+      </section>
+
+      <section id="death-screen" class="screen death-screen hidden" aria-labelledby="death-title">
+        <div class="death-vignette"></div>
+        <div class="death-copy">
+          <p class="death-mark">☠</p>
+          <h2 id="death-title">YOU DIED</h2>
+          <p id="death-reason">Curiosity has consequences.</p>
+          <button id="try-again" class="primary-button">Try Again</button>
+        </div>
+      </section>
+
+      <section id="crack-screen" class="screen crack-screen hidden" aria-label="The world is breaking">
+        <div class="crack-flash"></div>
+        <div class="crack-lines" aria-hidden="true">
+          <i></i><i></i><i></i><i></i><i></i><i></i>
+        </div>
+        <div class="crack-message">
+          <p>WRONG ANSWER.</p>
+          <h2>GOOD.</h2>
+        </div>
+      </section>
+
+      <section id="game-screen" class="screen game-screen hidden" aria-label="The real game">
+        <header class="game-hud">
+          <div>
+            <p class="hud-kicker">THE REAL GAME</p>
+            <p class="hud-title">Rage Room</p>
+          </div>
+          <div class="hud-stats">
+            <span>Level <b id="level-count">1</b></span>
+            <span id="danger-timer" class="hidden">Lava <b id="danger-time">--</b></span>
+            <span>Deaths <b id="death-count">0</b></span>
+            <span>Checkpoint <b id="checkpoint-count">0/2</b></span>
+          </div>
+          <button id="skip-level" class="skip-button">Skip Level</button>
+          <button id="mute-button" class="icon-button" aria-label="Toggle sound">♪</button>
+        </header>
+
+        <div id="toast" class="toast" aria-live="polite">Welcome to the tutorial.</div>
+        <div id="music-label" class="music-label hidden">♪ Taco Storm — original chiptune</div>
+        <canvas id="game-canvas" width="960" height="540" aria-label="A very difficult obstacle course"></canvas>
+
+        <div class="controls-hint"><span><kbd>A</kbd><kbd>D</kbd> move</span><span><kbd>W</kbd> or <kbd>Space</kbd> jump</span><span><kbd>R</kbd> restart</span></div>
+        <div class="touch-controls" aria-label="Touch controls">
+          <button id="touch-left" aria-label="Move left">◀</button>
+          <button id="touch-right" aria-label="Move right">▶</button>
+          <button id="touch-jump" class="jump" aria-label="Jump">↑</button>
+        </div>
+
+        <div id="win-panel" class="win-panel hidden">
+          <p class="eyebrow">Against all reasonable odds</p>
+          <h2>YOU ESCAPED</h2>
+          <p id="win-stats">Only 0 deaths. Suspicious.</p>
+          <button id="play-again" class="primary-button">Suffer Again</button>
+        </div>
+
+        <div id="troll-panel" class="troll-panel hidden" aria-live="assertive">
+          <p>HA HA!</p>
+          <h2>YOU SUCK</h2>
+          <small>Back to the beginning.</small>
+        </div>
+
+        <div id="level-banner" class="level-banner hidden" aria-live="polite">
+          <p>SECRET FOUND</p>
+          <h2>LEVEL 2</h2>
+          <small>The Wrong Way</small>
+        </div>
+
+        <aside id="elevator-panel" class="elevator-panel hidden" aria-label="Elevator controls">
+          <p>Floor Select</p>
+          <div id="floor-buttons">
+            <button data-floor="1">1</button><button data-floor="2">2</button>
+            <button data-floor="3">3</button><button data-floor="4">4</button>
+            <button data-floor="5">5</button><button data-floor="6">6</button>
+            <button data-floor="7">7</button><button data-floor="8">8</button>
+            <button data-floor="9">9</button><button data-floor="10">10</button>
+          </div>
+          <small id="elevator-readout">LOBBY</small>
+        </aside>
+
+        <aside id="quiz-panel" class="quiz-panel hidden" aria-label="Yes or no question">
+          <p id="quiz-number">QUESTION 1 OF 6</p>
+          <h2 id="quiz-question">Is this an easy question?</h2>
+          <div class="quiz-answers">
+            <button data-answer="yes">YES</button>
+            <button data-answer="no">NO</button>
+          </div>
+          <small id="quiz-result">Choose carefully.</small>
+        </aside>
+
+        <aside id="narrator-box" class="narrator-box hidden" aria-live="polite">
+          <p>THE NARRATOR</p>
+          <q id="narrator-line">Please walk to the right.</q>
+        </aside>
+      </section>
+    </main>
+    <script src="game.js?v=unknown-button-22"></script>
+  </body>
+</html>
