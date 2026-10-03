@@ -81,7 +81,9 @@
             <span id="danger-timer" class="hidden">Lava <b id="danger-time">--</b></span>
             <span>Deaths <b id="death-count">0</b></span>
             <span>Checkpoint <b id="checkpoint-count">0/2</b></span>
+            <span>Shards <b id="shard-count">0/5</b></span>
           </div>
+          <button id="shop-button" class="shop-button">Shop <b id="shard-bank">0</b></button>
           <button id="skip-level" class="skip-button">Skip Level</button>
           <button id="mute-button" class="icon-button" aria-label="Toggle sound">♪</button>
         </header>
@@ -90,10 +92,11 @@
         <div id="music-label" class="music-label hidden">♪ Taco Storm — original chiptune</div>
         <canvas id="game-canvas" width="960" height="540" aria-label="A very difficult obstacle course"></canvas>
 
-        <div class="controls-hint"><span><kbd>A</kbd><kbd>D</kbd> move</span><span><kbd>W</kbd> or <kbd>Space</kbd> jump</span><span><kbd>R</kbd> restart</span></div>
+        <div class="controls-hint"><span><kbd>A</kbd><kbd>D</kbd> move</span><span><kbd>W</kbd> or <kbd>Space</kbd> triple-jump</span><span><kbd>E</kbd> climb ladders</span><span><kbd>R</kbd> restart</span></div>
         <div class="touch-controls" aria-label="Touch controls">
           <button id="touch-left" aria-label="Move left">◀</button>
           <button id="touch-right" aria-label="Move right">▶</button>
+          <button id="touch-climb" class="climb" aria-label="Climb ladder">E</button>
           <button id="touch-jump" class="jump" aria-label="Jump">↑</button>
         </div>
 
@@ -141,9 +144,92 @@
         <aside id="narrator-box" class="narrator-box hidden" aria-live="polite">
           <p>THE NARRATOR</p>
           <q id="narrator-line">Please walk to the right.</q>
+          <div id="narrator-word-bank" class="narrator-word-bank" aria-label="Available narrator words"></div>
+          <small id="narrator-word-status">CLICK THE WORDS IN ORDER</small>
         </aside>
+
+        <div id="troll-overlay" class="troll-overlay hidden" aria-live="polite">
+          <p id="troll-overlay-kicker">LOADING NEXT ROOM</p>
+          <h2 id="troll-overlay-title">99%</h2>
+          <div class="troll-progress"><i id="troll-progress-bar"></i></div>
+          <small id="troll-overlay-hint">Please wait...</small>
+          <section id="loading-puzzle" class="loading-puzzle hidden" aria-label="Loading screen repair puzzle">
+            <p id="loading-puzzle-count">REPAIR 1 / 6</p>
+            <h3 id="loading-puzzle-task">Find the broken pixel.</h3>
+            <div id="loading-puzzle-board" class="loading-puzzle-board"></div>
+            <small id="loading-puzzle-status">Click inside the diagnostic area.</small>
+          </section>
+          <button id="overlay-target" class="overlay-target hidden">CLICK ME</button>
+          <button id="overlay-continue" class="overlay-continue hidden">CLAIM VICTORY</button>
+        </div>
+
+        <div id="level-select" class="level-select hidden" role="dialog" aria-modal="true" aria-labelledby="level-select-title">
+          <p>SKIP LEVEL</p>
+          <h2 id="level-select-title">Choose a Level</h2>
+          <div class="level-select-grid">
+            <section class="level-group">
+              <h3>ACT I · THE DISGUISE</h3>
+              <div class="level-group-buttons">
+                <button data-level="1"><b>1</b><span>The First Obby</span></button>
+                <button data-level="2"><b>2</b><span>Taco Storm</span></button>
+                <button data-level="3"><b>3</b><span>WHAT?</span></button>
+                <button data-level="4"><b>4</b><span>Mirror Room</span></button>
+                <button data-level="5"><b>5</b><span>Wrong Light</span></button>
+              </div>
+            </section>
+            <section class="level-group">
+              <h3>ACT II · TRICK ROOMS</h3>
+              <div class="level-group-buttons">
+                <button data-level="6"><b>6</b><span>Elevator</span></button>
+                <button data-level="7"><b>7</b><span>Dark Walkway</span></button>
+                <button data-level="8"><b>8</b><span>WHAT THE HELL?</span></button>
+                <button data-level="9"><b>9</b><span>Yes or No?</span></button>
+                <button data-level="10"><b>10</b><span>Narrator</span></button>
+              </div>
+            </section>
+            <section class="level-group">
+              <h3>ACT III · RAGE GAUNTLET</h3>
+              <div class="level-group-buttons">
+                <button data-level="11"><b>11</b><span>Delayed Platform</span></button>
+                <button data-level="12"><b>12</b><span>Runaway Checkpoints</span></button>
+                <button data-level="13"><b>13</b><span>Reverse Doors</span></button>
+                <button data-level="14"><b>14</b><span>Loading...</span></button>
+                <button data-level="15"><b>15</b><span>Devil Chase</span></button>
+                <button data-level="16"><b>16</b><span>Victory?</span></button>
+              </div>
+            </section>
+            <section class="level-group special">
+              <h3>ACT IV · IMPOSSIBLE WORLDS</h3>
+              <div class="level-group-buttons">
+                <button data-level="17"><b>17</b><span>Planet Party</span></button>
+                <button data-level="18"><b>18</b><span>Copycat Factory</span></button>
+                <button data-level="19"><b>19</b><span>Furnace Walk</span></button>
+                <button data-level="20"><b>20</b><span>Gearbox</span></button>
+                <button data-level="21"><b>21</b><span>Steam Valves</span></button>
+                <button data-level="22"><b>22</b><span>Night Tower</span></button>
+                <button data-level="23"><b>23</b><span>Starship Shift</span></button>
+              </div>
+            </section>
+          </div>
+          <button id="close-level-select" class="primary-button">Keep Playing</button>
+        </div>
+
+        <div id="shop-panel" class="shop-panel hidden" role="dialog" aria-modal="true" aria-labelledby="shop-title">
+          <p>RAGE SHARD EMPORIUM</p>
+          <h2 id="shop-title">Suspicious Shop</h2>
+          <p class="shop-balance">Your shards: <b id="shop-balance">0</b></p>
+          <div class="shop-grid">
+            <button data-shop-item="air"><b>8</b><span>Air Rune</span><small>One extra midair jump everywhere</small></button>
+            <button data-shop-item="boots"><b>7</b><span>Rage Boots</span><small>Run 14% faster</small></button>
+            <button data-shop-item="magnet"><b>6</b><span>Shard Magnet</span><small>Collect shards from farther away</small></button>
+            <button data-shop-item="slow"><b>10</b><span>Chaos Charm</span><small>Moving hazards become 15% slower</small></button>
+            <button data-shop-item="shield"><b>5</b><span>Spite Shield</span><small>Blocks one death; can be rebought</small></button>
+          </div>
+          <p id="shop-message" class="shop-message">The shopkeeper accepts only suffering.</p>
+          <button id="close-shop" class="primary-button">Back to the Pain</button>
+        </div>
       </section>
     </main>
-    <script src="game.js?v=unknown-button-22"></script>
+    <script src="game.js?v=planet-party-fix-44"></script>
   </body>
 </html>
